@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title> PLUTO BOYZ <GLOBAL>/Login </title>
-            <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div class="Login_box">
-            <h1> PLUTO BOYZ GLOBAL</h1>
-            <P> Login to your music world</P>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PLUTO BOYZ GLOBAL - Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <form class="Login_box" id="loginForm">
+    <h1>PLUTO BOYZ GLOBAL</h1>
+    <p>Login to your music world</p>
 
-            <input type=" text" id="username"
-    placholder="username">
-            <input type=" password" id="password"
-     placeholder="password">
+    <label for="username">Username</label>
+    <input type="text" id="username" placeholder="username" required>
 
-     <button onclick="Login()">Login</button>
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="password" required>
 
-     <p id ="message"></p>
-        </div>
-        <script src="Script.js"></script>
-    </body>
+    <button type="submit">Login</button>
+    <p id="message"></p>
+    <p>No account yet? <a href="register.html">Sign up here</a></p>
+  </form>
+
+  <script src="script.js"></script>
+</body>
 </html>
