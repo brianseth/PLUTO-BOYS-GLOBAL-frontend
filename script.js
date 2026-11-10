@@ -9,6 +9,11 @@ document.getElementById("newUsername") .value;
 document.getElementById("newPassword") .value;
    let message = 
 document.getElementById("regMessage")
+document.getElementById("loginForm")
+  ?.addEventListener("submit", function (e) {
+    e.preventDefault();
+    Login();
+  });
 
 if (!username || !password) {
     message.textContent = "FILL IN ALL FIELDS";
