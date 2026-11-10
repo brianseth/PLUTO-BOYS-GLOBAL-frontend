@@ -1,76 +1,80 @@
-const BASE_URL =
-https://pluto-boys-global.onrender.com"; // <-- replace with your Render URL
+const BASE_URL = "https://pluto-boys-global.onrender.com";
 
-//REGISTER USER
-function register() {
-    let username =
-document.getElementById("newUsername") .value;
-    let password = 
-document.getElementById("newPassword") .value;
-   let message = 
-document.getElementById("regMessage")
-document.getElementById("loginForm")
-  ?.addEventListener("submit", function (e) {
-    e.preventDefault();
-    Login();
+async function postJSON(path, body) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, data };
+}
 
-if (!username || !password) {
-    message.textContent = "FILL IN ALL FIELDS";
-    message.style.color ="red";
+function showMessage(el, text, ok) {
+  el.textContent = text;
+  el.style.color = ok ? "green" : "red";
+}
+
+// REGISTER
+async function register() {
+  const username = document.getElementById("newUsername").value.trim();
+  const password = document.getElementById("newPassword").value;
+  const message = document.getElementById("regMessage");
+
+  if (!username || !password) {
+    showMessage(message, "Fill in all fields", false);
     return;
-}
-fetch( `${BASE_URL}/register`,{
-   method: "POST",
-   headers: { "Content-Type": "application/json"},
-    body: JSON.stringify({ username, password})
-   })
-   .then (res => res.json())
-   .then( data =>{
-    message.style.color ="green";
-    message.textContent = data.message;
-   });
-}
-document.getElementById("registerForm")
-  .addEventListener("submit", function (e) {
-    e.preventDefault();
-    Register();
-  });
-//LOGIN USER
-function login(){
-    let username =
-document.getElementById("username") .value;
-    let password =
-document.getElementById("password") .value;
-    let message = 
-document.getElementById("loginMessage");
-
-    fetch( `${BASE_URL}/login`,{
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({ username, password})
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.token) {
-            message.style.color = "green";
-            message.textContent = data.message;
-            localStorage.setItem("token", data.token);
-        } else {
-            message.style.color = "red";
-            message.textContent = data.message;
-        }
-    });
+  }
+  try {
+    const { ok, data } = await postJSON("/register", { username, password });
+    showMessage(message, data.message || (ok ? "Account created" : "Registration failed"), ok);
+    if (ok) setTimeout(() => (window.location.href = "index.html"), 1200);
+  } catch {
+    showMessage(message, "Can't reach the server. Try again in a minute.", false);
+  }
 }
 
-//logout
+// LOGIN
+async function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const message = document.getElementById("message");
+
+  if (!username || !password) {
+    showMessage(message, "Fill in all fields", false);
+    return;
+  }
+  try {
+    const { ok, data } = await postJSON("/login", { username, password });
+    if (ok && data.token) {
+      localStorage.setItem("token", data.token);
+      window.location.href = "dashboard.html";
+    } else {
+      showMessage(message, data.message || "Login failed", false);
+    }
+  } catch {
+    showMessage(message, "Can't reach the server. Try again in a minute.", false);
+  }
+}
+
+// LOGOUT
 function logout() {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "index.html";
+  localStorage.removeItem("token");
+  window.location.href = "index.html";
 }
 
-//redirect if not logged in (optional)
-if (window.location.href.includes("dashboard.html") &&
-localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "index.html";
+// Redirect to login if not signed in
+if (window.location.pathname.endsWith("dashboard.html") &&
+    !localStorage.getItem("token")) {
+  window.location.href = "index.html";
 }
+
+// Form hooks (safe on any page)
+document.getElementById("registerForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  register();
+});
+document.getElementById("loginForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  login();
+});
