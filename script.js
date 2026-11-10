@@ -26,6 +26,11 @@ fetch( `${BASE_URL}/register`,{
     message.textContent = data.message;
    });
 }
+document.getElementById("registerForm")
+  .addEventListener("submit", function (e) {
+    e.preventDefault();
+    Register();
+  });
 //LOGIN USER
 function login(){
     let username =
